@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Advanced ToDo List</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f3e5f5;
+  margin: 0;
+  padding: 15px;
+  color: #333;
+}
+
+.container {
+  max-width: 650px;
+  margin: 20px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px #0002;
+}
+
+h1, h2, h3 {
+  text-align: center;
+  color: #7b1fa2;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 7px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+button {
+  background: #8e24aa;
+  color: white;
+  border: none;
+  padding: 11px 15px;
+  margin: 5px 3px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #6a1b9a;
+}
+
+.full {
+  width: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+.link {
+  color: #8e24aa;
+  text-align: center;
+  cursor: pointer;
+}
+
+.dashboard {
+  display: flex;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.card {
+  flex: 1;
+  background: #f3e5f5;
+  padding: 12px 5px;
+  text-align: center;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.card strong {
+  display: block;
+  font-size: 25px;
+  margin-top: 8px;
+  color: #7b1fa2;
+}
+
+.task {
+  background: #f5f5f5;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border-left: 5px solid #8e24aa;
+  overflow-wrap: anywhere;
+}
+
+.task.completed {
+  opacity: 0.65;
+}
+
+.task.completed .task-title {
+  text-decoration: line-through;
+}
+
+.task-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.task-info {
+  font-size: 13px;
+  margin: 8px 0;
+}
+
+.high {
+  border-left-color: red;
+}
+
+.medium {
+  border-left-color: orange;
+}
+
+.low {
+  border-left-color: green;
+}
+
+.delete {
+  background: #e53935;
+}
+
+.complete {
+  background: #43a047;
+}
+
+.edit {
+  background: #1976d2;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar h2 {
+  margin: 0;
+}
+
+.dark {
+  background: #181818;
+  color: white;
+}
+
+.dark .container {
+  background: #292929;
+}
+
+.dark .task {
+  background: #383838;
+}
+
+.dark .card {
+  background: #383838;
+}
+
+.dark input,
+.dark select {
+  background: #383838;
+  color: white;
+  border-color: #666;
+}
+
+.dark h1,
+.dark h2,
+.dark h3 {
+  color: #ce93d8;
+}
+
+.dark .link {
+  color: #ce93d8;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN PAGE -->
+
+<div class="container" id="loginPage">
+
+<h1>📝 My ToDo List</h1>
+<h3>Login</h3>
+
+<input id="loginUser"
+placeholder="Username">
+
+<input id="loginPass"
+type="password"
+placeholder="Password">
+
+<button class="full" onclick="login()">
+Login
+</button>
+
+<p class="link" onclick="showRegister()">
+Create New Account
+</p>
+
+</div>
+
+
+<!-- REGISTRATION PAGE -->
+
+<div class="container hidden" id="registerPage">
+
+<h1>📝 Registration</h1>
+
+<input id="regUser"
+placeholder="Create Username">
+
+<input id="regPass"
+type="password"
+placeholder="Create Password">
+
+<button class="full" onclick="register()">
+Register
+</button>
+
+<p class="link" onclick="showLogin()">
+Already have an account? Login
+</p>
+
+</div>
+
+
+<!-- MAIN PROJECT -->
+
+<div class="container hidden" id="mainPage">
+
+<div class="topbar">
+<h2>📝 ToDo List</h2>
+<button onclick="toggleDark()">🌙</button>
+</div>
+
+<p id="welcome"></p>
+
+<button onclick="logout()">Logout</button>
+
+<h3>📊 Dashboard</h3>
+
+<div class="dashboard">
+
+<div class="card">
+Total
+<strong id="total">0</strong>
+</div>
+
+<div class="card">
+Completed
+<strong id="completed">0</strong>
+</div>
+
+<div class="card">
+Pending
+<strong id="pending">0</strong>
+</div>
+
+</div>
+
+<h3>➕ Add New Task</h3>
+
+<input id="taskInput"
+placeholder="Enter Task Name">
+
+<input id="taskDate"
+type="date">
+
+<input id="taskTime"
+type="time">
+
+<select id="priority">
+<option value="Low">Low Priority</option>
+<option value="Medium">Medium Priority</option>
+<option value="High">High Priority</option>
+</select>
+
+<select id="category">
+<option value="Study">Study</option>
+<option value="Personal">Personal</option>
+<option value="Work">Work</option>
+<option value="Others">Others</option>
+</select>
+
+<button class="full" id="saveTaskBtn"
+onclick="addTask()">
+Add Task
+</button>
+
+<h3>🔍 Search Tasks</h3>
+
+<input id="search"
+placeholder="Search Task"
+oninput="displayTasks()">
+
+<select id="filter"
+onchange="displayTasks()">
+<option value="All">All Tasks</option>
+<option value="Completed">Completed</option>
+<option value="Pending">Pending</option>
+</select>
+
+<h3>📋 My Tasks</h3>
+
+<div id="taskList"></div>
+
+</div>
+
+
+<script>
+
+let currentUser = "";
+let tasks = [];
+let editId = null;
+
+function showPage(page) {
+  document.getElementById("loginPage")
+    .classList.add("hidden");
+
+  document.getElementById("registerPage")
+    .classList.add("hidden");
+
+  document.getElementById("mainPage")
+    .classList.add("hidden");
+
+  document.getElementById(page)
+    .classList.remove("hidden");
+}
+
+function showRegister() {
+  showPage("registerPage");
+}
+
+function showLogin() {
+  showPage("loginPage");
+}
+
+function register() {
+  let user = document.getElementById("regUser")
+    .value.trim();
+
+  let pass = document.getElementById("regPass")
+    .value;
+
+  if (!user || !pass) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  if (localStorage.getItem("user_" + user)) {
+    alert("Username already exists");
+    return;
+  }
+
+  localStorage.setItem(
+    "user_" + user,
+    JSON.stringify({password: pass})
+  );
+
+  alert("Registration Successful!");
+  showLogin();
+}
+
+function login() {
+  let user = document.getElementById("loginUser")
+    .value.trim();
+
+  let pass = document.getElementById("loginPass")
+    .value;
+
+  let data = localStorage.getItem("user_" + user);
+
+  if (!data) {
+    alert("User not found");
+    return;
+  }
+
+  let account = JSON.parse(data);
+
+  if (account.password !== pass) {
+    alert("Wrong Password");
+    return;
+  }
+
+  currentUser = user;
+
+  localStorage.setItem("activeUser", user);
+
+  openDashboard();
+}
+
+function openDashboard() {
+  tasks = JSON.parse(
+    localStorage.getItem("tasks_" + currentUser)
+    || "[]"
+  );
+
+  document.getElementById("welcome")
+    .textContent = "Welcome, " + currentUser + "!";
+
+  showPage("mainPage");
+  displayTasks();
+}
+
+function logout() {
+  currentUser = "";
+  tasks = [];
+  localStorage.removeItem("activeUser");
+  showLogin();
+}
+
+function saveTasks() {
+  localStorage.setItem(
+    "tasks_" + currentUser,
+    JSON.stringify(tasks)
+  );
+}
+
+function addTask() {
+  let name = document.getElementById("taskInput")
+    .value.trim();
+
+  let date = document.getElementById("taskDate").value;
+  let time = document.getElementById("taskTime").value;
+  let priority = document.getElementById("priority").value;
+  let category = document.getElementById("category").value;
+
+  if (!name) {
+    alert("Please enter a task");
+    return;
+  }
+
+  if (editId !== null) {
+    let task = tasks.find(t => t.id === editId);
+
+    if (task) {
+      task.name = name;
+      task.date = date;
+      task.time = time;
+      task.priority = priority;
+      task.category = category;
+    }
+
+    editId = null;
+
+    document.getElementById("saveTaskBtn")
+      .textContent = "Add Task";
+
+  } else {
+    tasks.push({
+      id: Date.now() + Math.random(),
+      name: name,
+      date: date,
+      time: time,
+      priority: priority,
+      category: category,
+      completed: false
+    });
+  }
+
+  document.getElementById("taskInput").value = "";
+  document.getElementById("taskDate").value = "";
+  document.getElementById("taskTime").value = "";
+
+  saveTasks();
+  displayTasks();
+}
+
+function completeTask(id) {
+  let task = tasks.find(t => t.id === id);
+
+  if (task) {
+    task.completed = !task.completed;
+  }
+
+  saveTasks();
+  displayTasks();
+}
+
+function deleteTask(id) {
+  if (!confirm("Delete this task?")) {
+    return;
+  }
+
+  tasks = tasks.filter(t => t.id !== id);
+
+  saveTasks();
+  displayTasks();
+}
+
+function editTask(id) {
+  let task = tasks.find(t => t.id === id);
+
+  if (!task) return;
+
+  document.getElementById("taskInput").value =
+    task.name;
+
+  document.getElementById("taskDate").value =
+    task.date;
+
+  document.getElementById("taskTime").value =
+    task.time;
+
+  document.getElementById("priority").value =
+    task.priority;
+
+  document.getElementById("category").value =
+    task.category;
+
+  editId = id;
+
+  document.getElementById("saveTaskBtn")
+    .textContent = "Update Task";
+
+  document.getElementById("taskInput")
+    .scrollIntoView({behavior: "smooth"});
+}
+
+function displayTasks() {
+  let list = document.getElementById("taskList");
+
+  list.innerHTML = "";
+
+  let search = document.getElementById("search")
+    .value.toLowerCase();
+
+  let filter = document.getElementById("filter").value;
+
+  let filtered = tasks.filter(task => {
+    let matchSearch = task.name.toLowerCase()
+      .includes(search);
+
+    let matchFilter =
+      filter === "All" ||
+      (filter === "Completed" && task.completed) ||
+      (filter === "Pending" && !task.completed);
+
+    return matchSearch && matchFilter;
+  });
+
+  filtered.forEach(task => {
+    let div = document.createElement("div");
+
+    div.className = "task " +
+      task.priority.toLowerCase();
+
+    if (task.completed) {
+      div.classList.add("completed");
+    }
+
+    let title = document.createElement("div");
+    title.className = "task-title";
+    title.textContent = task.name;
+
+    let info = document.createElement("div");
+    info.className = "task-info";
+
+    info.textContent =
+      "📅 " + (task.date || "No Date") +
+      " ⏰ " + (task.time || "No Time") +
+      " | ⭐ " + task.priority +
+      " | 📚 " + task.category;
+
+    let completeBtn = document.createElement("button");
+    completeBtn.className = "complete";
+    completeBtn.textContent = task.completed
+      ? "Undo" : "Complete";
+
+    completeBtn.onclick = () => completeTask(task.id);
+
+    let editBtn = document.createElement("button");
+    editBtn.className = "edit";
+    editBtn.textContent = "Edit";
+    editBtn.onclick = () => editTask(task.id);
+
+    let deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete";
+    deleteBtn.textContent = "Delete";
+    deleteBtn.onclick = () => deleteTask(task.id);
+
+    div.appendChild(title);
+    div.appendChild(info);
+    div.appendChild(completeBtn);
+    div.appendChild(editBtn);
+    div.appendChild(deleteBtn);
+
+    list.appendChild(div);
+  });
+
+  if (filtered.length === 0) {
+    let message = document.createElement("p");
+    message.textContent = "No tasks found";
+    message.style.textAlign = "center";
+    list.appendChild(message);
+  }
+
+  document.getElementById("total").textContent =
+    tasks.length;
+
+  document.getElementById("completed").textContent =
+    tasks.filter(t => t.completed).length;
+
+  document.getElementById("pending").textContent =
+    tasks.filter(t => !t.completed).length;
+}
+
+function toggleDark() {
+  document.body.classList.toggle("dark");
+
+  localStorage.setItem(
+    "darkMode",
+    document.body.classList.contains("dark")
+  );
+}
+
+if (localStorage.getItem("darkMode") === "true") {
+  document.body.classList.add("dark");
+}
+
+let savedUser = localStorage.getItem("activeUser");
+
+if (savedUser && localStorage.getItem("user_" + savedUser)) {
+  currentUser = savedUser;
+  openDashboard();
+}
+
+</script>
+
+</body>
+</html>
